@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta chrset="UTF 8">
+    <title>Event Registration</title>
+</head>
+
+<body  ng-app="sampleApp">
+<script src="https://code.angularjs.org/1.6.9/angular-route.js"></script>
+<script src="https://code.angularjs.org/1.6.9/angular.min.js"></script>
+<script src="https://code.angularjs.org/1.6.9/angular.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script src="/lib/bootstrap.js"></script>
+<script src="/lib/bootstrap.css"></script>
+<h1> Search </h1>
+    <input id="textSkills" type="text" name="msg" placeholder="Skills">
+    <input id="textExperiance" type="text" name="msg" placeholder="Exp">
+    <input id="textJobType" type="text" name="msg" placeholder="Job Type">
+    <button onclick="submit('manju')">Click me</button>
+<div class="chat-logs"id="chat-logs">
+
+</div>
+<script type="text/javascript">
+
+function submit(text){
+    var rawskills = document.getElementById("textSkills").value;
+    var rawExp = document.getElementById("textExperiance").value;
+    var rawJobType = document.getElementById("textJobType").value;
+    var query=rawskills+" "+rawExp+" "+rawJobType;
+    $("#chat-logs").html("");;
+    window.console&&console.log('in get of my fucntion rawText '+rawskills+rawExp+rawJobType);
+            $.get("/get", { msg: query }).done(function(data) {
+            window.console&&console.log('in get of my fucntion rawText '+rawskills);
+            window.console&&console.log('in get of my fucntion rawText '+data);
+            $(".chat-logs").append(data);
+          });
+    }
+
+
+
+</script>
+    </form>
+</div>
+
+</body>
+</html>
