@@ -16,6 +16,27 @@ def convert_json_to_pandas(path):
     # data.to_csv('/home/manjunathh/Resume Screening/Resume_data.csv')
     return data
 
+def read_csv(path):
+    data=pd.read_csv(path)
+    return data
+
+def get_drive_link(files):
+    path2 = "/home/manjunathh/Resume Screening/ResumesWithHyperLink1.csv"
+    data2 = read_csv(path2)
+    File_dict={}
+    File_names=data2['FileName']
+    Drive_link=data2['DriveLink']
+    for f,link in zip(File_names,Drive_link):
+        File_dict[f]=link
+    links=[]
+    for f in files:
+        links.append(File_dict[f])
+    # print("File_dict",links)
+    return links
+# def save_indexed_files(obj):
+#     es.snapshot.create_repository(repository='test', body=snapshot_body)
+#     es.snapshot.create(repository='test', snapshot='my_snapshot')
+
 
 def index_files(df):
     es=Elasticsearch()
@@ -24,16 +45,19 @@ def index_files(df):
     i=0
     for row_number in range(df.shape[0]):
         body=dict([(name,str(df.iloc[row_number][name])) for name in col_names])
-        print("body",i,body)
+        # print("body",i,body)
         i+=1
         es.index(index='data_science',doc_type='books',body=body)
+    print("Indexing of documents done")
     return es
 
 
 def results(indexedfiles,query_skills,query_exp,query_jobtype):
-    print("query exp is :",type(query_exp))
+    # print("query exp is :",type(query_exp))
     search_results_skills=indexedfiles.search(index='data_science',doc_type='books',body={
-                                                                    "_source": "Filename",
+                                                                    "_source": ["Filename","YearsOfExperience",
+                                                                                "engineerType","SkillsFound"],
+                                                                    # "_source": "Filename",
                                                                     "from": 0, "size": 5000,
                                                                     'query':{
                                                                         'bool':{
@@ -67,8 +91,9 @@ def results(indexedfiles,query_skills,query_exp,query_jobtype):
                                                                     }
                                                                 })
 
-
+    print("search_results_skills",search_results_skills)
     return search_results_skills
+
 
 if __name__ == '__main__':
     start = time.time()
